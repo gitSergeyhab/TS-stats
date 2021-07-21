@@ -1,0 +1,54 @@
+import fs from 'fs'; // npm i @types/node
+import {parseDate} from './util';
+import {Results} from './Result';
+
+
+export interface DataObj {
+    date: Date,
+    teamHome: string,
+    teamAway: string,
+    goalsHome: number,
+    goalsAway: number,
+    winner: string,
+    referee: string,
+}
+
+type MatchData = [Date, string, string, number, number, Results, string];
+
+export class CsvFileReader {
+    dataObg: DataObj[] = [];
+    dataArr: MatchData[] = [];
+    
+
+    constructor(public fileName: string) {};
+
+    createMatchObj = (match: MatchData): DataObj => ({
+        date: match[0],
+        teamHome: match[1],
+        teamAway: match[2],
+        goalsHome: match[3],
+        goalsAway: match[4],
+        winner: match[5],
+        referee: match[6],
+    })
+
+
+    readToArray(): void {
+        this.dataArr = fs.readFileSync(this.fileName, {encoding: 'utf-8'})
+            .split('\n')
+            .map((el: string): string[] => el.split(','))
+            .map((el: string[]): MatchData => ([
+                parseDate(el[0]),
+                el[1],
+                el[2],
+                +el[3],
+                +el[4],
+                el[5] as Results,
+                el[6],
+            ]));
+    }
+
+    readToObg(): void {
+        this.dataObg = this.dataArr.map((el) => this.createMatchObj(el))
+    }
+}
