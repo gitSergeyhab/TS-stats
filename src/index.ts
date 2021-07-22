@@ -1,16 +1,25 @@
-// import {DataObj} from './inheritance/CsvFileReader';
 import {MatchReader} from './MatchReader';
 import {CsvFileReader} from './CsvFileReader';
-import {Results} from './Result';
+import {WinAnalysis} from './analyzers/WinAnalysis';
+import {ConsoleReport} from './reportTargets/ConsoleReport';
+import {HtmlReport} from './reportTargets/HtmlReport';
+
+import {Summary} from './Summary';
 
 const csvFileReader = new CsvFileReader('football.csv');
 const matchReader = new MatchReader(csvFileReader);
 matchReader.load();
-console.log(matchReader.matches)
 
-const manWin1 = matchReader.matches.filter(
-    (match) => (match[1] === 'Man United' && match[5] === Results.HomeWin) ||
-                (match[2] === 'Man United' && match[5] === Results.AwayWin)
-    )
+const summary = new Summary(new WinAnalysis('Man City'), new ConsoleReport())
+summary.buildAndPrintReport(matchReader.matches, '');
 
-console.log(manWin1.length)
+const summary2 = new Summary(new WinAnalysis('Man City'), new HtmlReport())
+summary2.buildAndPrintReport(matchReader.matches, 'report.html');
+
+
+
+//static
+const matchReader1 = MatchReader.fromCsv('football.csv');
+matchReader1.load();
+const summary3 = Summary.winsAnalysisWithHtmlReport('Man United');
+summary3.buildAndPrintReport(matchReader1.matches, 'report2.html');
