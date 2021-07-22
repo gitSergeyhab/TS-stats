@@ -1,15 +1,16 @@
-import {DataObj} from './CsvFileReader';
+// import {DataObj} from './inheritance/CsvFileReader';
 import {MatchReader} from './MatchReader';
-
+import {CsvFileReader} from './CsvFileReader';
 import {Results} from './Result';
 
+const csvFileReader = new CsvFileReader('football.csv');
+const matchReader = new MatchReader(csvFileReader);
+matchReader.load();
+console.log(matchReader.matches)
 
+const manWin1 = matchReader.matches.filter(
+    (match) => (match[1] === 'Man United' && match[5] === Results.HomeWin) ||
+                (match[2] === 'Man United' && match[5] === Results.AwayWin)
+    )
 
-const fileReader = new MatchReader('football.csv');
-fileReader.readToArray();
-console.log(fileReader.dataArr[0])
-
-// const manWin = fileReader.dataObg.filter(({teamHome, teamAway, winner}: {teamHome: string; teamAway: string; winner: string}) => (
-//     (teamHome === 'Man United' && winner === Results.HomeWin) ||
-//     (teamAway === 'Man United' && winner === Results.AwayWin))
-//     )
+console.log(manWin1.length)
